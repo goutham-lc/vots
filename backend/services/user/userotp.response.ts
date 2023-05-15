@@ -10,4 +10,7 @@ export default class response {
 
   @Field((type) => Boolean, { nullable: true })
   Login?:boolean;
+
+  @Field((type) => Boolean, { nullable: true })
+  isAdmin:boolean;
 }   
