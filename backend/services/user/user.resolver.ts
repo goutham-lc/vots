@@ -51,9 +51,9 @@ export default class UserResolver {
             },
           }
         );
-        return { Login: true, userId: users[0]._id };
+        return { Login: true, userId: users[0]._id,isAdmin:users[0].isAdmin };
       } else {
-        return { Login: false, userId: null };
+        return { Login: false, userId: null,isAdmin:null };
       }
     } catch (error) {
       throw new Error(`${error}`);
