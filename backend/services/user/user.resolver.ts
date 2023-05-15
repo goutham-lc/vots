@@ -51,9 +51,9 @@ export default class UserResolver {
             },
           }
         );
-        return { Login: true, userId: users[0]._id,isAdmin:users[0].isAdmin };
+        return { Login: true, userId: users[0]._id,isAdmin:users[0].isAdmin  };
       } else {
-        return { Login: false, userId: null,isAdmin:null };
+        return { Login: false, userId: null,isAdmin:users[0].isAdmin };
       }
     } catch (error) {
       throw new Error(`${error}`);
@@ -97,7 +97,7 @@ export default class UserResolver {
      
 
       const accountSid = "AC910e8cf6d3d7f68adc1987b8c23aacf7";
-      const authToken = "7b7e0df76369b3125d63ab3db26220fa";
+      const authToken = "cd4951847263975b274a850d621b11f6";
       let client = require("twilio")(accountSid, authToken);
 
       let sms = await client.messages
@@ -157,7 +157,7 @@ export default class UserResolver {
       let user = await UserMongo.findById(users[0]._id);
 
       const accountSid = "AC910e8cf6d3d7f68adc1987b8c23aacf7";
-      const authToken = "7b7e0df76369b3125d63ab3db26220fa";
+      const authToken = "cd4951847263975b274a850d621b11f6";
       let client = require("twilio")(accountSid, authToken);
 
       let sms = await client.messages
