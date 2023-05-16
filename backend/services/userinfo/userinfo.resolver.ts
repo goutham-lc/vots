@@ -72,6 +72,19 @@ export default class UserInfoResolver {
         link: addUserinfoInput.link,
         user: addUserinfoInput.userId,
         location: addUserinfoInput.location,
+        createdAt: new Date(
+          new Date().setHours(
+            new Date().getHours() + 5,
+            new Date().getMinutes() + 30
+          )
+        ),
+        updatedAt: new Date(
+          new Date().setHours(
+            new Date().getHours() + 5,
+            new Date().getMinutes() + 30
+          )
+        ),
+
       };
 
       let record: any = new UserinfoMongo(jsonBody);
