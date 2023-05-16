@@ -84,10 +84,10 @@ export default class UserInfoResolver {
             new Date().getMinutes() + 30
           )
         ),
-
       };
 
       let record: any = new UserinfoMongo(jsonBody);
+      console.log(record, "records");
 
       await record.save().catch((err: any) => {
         throw new Error("Error while creating record : " + err);
