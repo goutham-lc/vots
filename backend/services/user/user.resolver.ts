@@ -103,7 +103,7 @@ export default class UserResolver {
       let sms = await client.messages
         .create({
           body: `Your Vots Verification OTP is: ${user.otp}`,
-          from: "+13143505646",
+          from: "+12543544982",
           to: "+91" + user.number,
         })
         .then((response: any) => {
@@ -163,7 +163,7 @@ export default class UserResolver {
       let sms = await client.messages
         .create({
           body: `Your Vots Verification OTP is: ${user.otp}`,
-          from: "+13143505646",
+          from: "+12543544982",
           to: "+91" + user.number,
         })
         .then((response: any) => {
