@@ -268,7 +268,7 @@ export default class UserInfoResolver {
               Date: new Date(item.Date),
               isverified: true,
               status: "Completed",
-              nikshayID: nikshayID.toString(),
+              nikshay: nikshayID.toString(),
               userName: records[0].name,
               userEmail: records[0].email,
             });
@@ -284,7 +284,7 @@ export default class UserInfoResolver {
               Date: new Date(currentDate),
               isverified: "Awaiting the Arrival",
               status: "Awaiting the Arrival",
-              nikshayID:  nikshayID.toString(),
+              nikshay:  nikshayID.toString(),
               userName: records[0].name,
               userEmail: records[0].email,
             });
@@ -293,7 +293,7 @@ export default class UserInfoResolver {
               Date: new Date(currentDate),
               isverified: false,
               status: "DisApproved",
-              nikshayID:  nikshayID.toString(),
+              nikshay:  nikshayID.toString(),
               userName: records[0].name,
               userEmail: records[0].email,
             });
