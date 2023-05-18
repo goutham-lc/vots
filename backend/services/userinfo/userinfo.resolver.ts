@@ -249,6 +249,7 @@ export default class UserInfoResolver {
       let monthDate: any = [];
 
       let currentDate = new Date(startDate);
+      console.log(currentDate, "currentDate");
       while (currentDate <= endDate) {
         monthDate.push({ Date: new Date(currentDate) });
         const dateExists = await records[0].recordsCounts.some((item: any) => {
@@ -257,8 +258,11 @@ export default class UserInfoResolver {
           ) {
             foundDate.push({
               Date: new Date(item.Date),
-              completed: true,
+              isverified: true,
+              status: "Completed",
               nikshayID: nikshayID,
+              userName: records[0].name,
+              userEmail: records[0].email,
             });
             return true;
           }
@@ -267,11 +271,25 @@ export default class UserInfoResolver {
 
         currentDate.setDate(currentDate.getDate() + 1);
         if (dateExists == false) {
-          foundDate.push({
-            Date: new Date(currentDate),
-            completed: false,
-            nikshayID: nikshayID,
-          });
+          if (currentDate > new Date()) {
+            foundDate.push({
+              Date: new Date(currentDate),
+              isverified: "Awaiting the Arrival",
+              status: "Awaiting the Arrival",
+              nikshayID: nikshayID,
+              userName: records[0].name,
+              userEmail: records[0].email,
+            });
+          } else {
+            foundDate.push({
+              Date: new Date(currentDate),
+              isverified: false,
+              status: "DisApproved",
+              nikshayID: nikshayID,
+              userName: records[0].name,
+              userEmail: records[0].email,
+            });
+          }
         }
       }
 
