@@ -17,6 +17,7 @@
     "cross-env": "^7.0.2",
     "crypto-js": "^4.1.1",
     "crypto-ts": "^1.0.2",
+    "exceljs": "^4.3.0",
     "express": "^4.17.1",
     "fuse.js": "6.4.1",
     "graphql": "^15.3.0",

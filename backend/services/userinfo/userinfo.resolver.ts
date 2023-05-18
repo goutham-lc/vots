@@ -1,10 +1,14 @@
 import { Resolver, Query, Arg, Int, Mutation, ID } from "type-graphql";
 import User from "./userinfo.type";
+import JSON from "graphql-type-json";
 import { User as UserMongo } from "../../../models/user";
 import { UserInfo as UserinfoMongo } from "../../../models/userinfo";
 import AddUserinfoInput from "./userinfo.input_type";
 import UserInfo from "./userinfo.type";
+import { RecordCount as RecordCountMongo } from "../../../models/recordcount";
 const ObjectID = require("mongodb").ObjectID;
+const ExcelJS = require("exceljs");
+const workbook = new ExcelJS.Workbook();
 
 @Resolver()
 export default class UserInfoResolver {
@@ -15,8 +19,29 @@ export default class UserInfoResolver {
     let users = await UserinfoMongo.aggregate([
       {
         $match: {
-          isVerified: false,
+          isVerified: null,
         },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+    ]);
+
+    return users;
+  }
+
+  @Query((returns) => [UserInfo], {
+    description: "Get all the records",
+  })
+  async recordsAdmin(): Promise<UserInfo[] | undefined> {
+    let users = await UserinfoMongo.aggregate([
+      {
+        $match: {},
       },
       {
         $lookup: {
@@ -87,10 +112,22 @@ export default class UserInfoResolver {
       };
 
       let record: any = new UserinfoMongo(jsonBody);
-      console.log(record, "records");
 
       await record.save().catch((err: any) => {
         throw new Error("Error while creating record : " + err);
+      });
+
+      let recordCount = new RecordCountMongo({
+        Date: new Date(
+          new Date().setHours(
+            new Date().getHours() + 5,
+            new Date().getMinutes() + 30
+          )
+        ),
+        user: addUserinfoInput.userId,
+      });
+      await recordCount.save().catch((err: any) => {
+        throw new Error("Error while creating record count: " + err);
       });
       return record;
     } catch (error) {
@@ -133,6 +170,158 @@ export default class UserInfoResolver {
       );
 
       return updatedRecord.nModified > 0 ? true : false;
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  }
+
+  @Mutation((returns) => Boolean, { description: "disapprove the user data" })
+  async disapproveRecord(@Arg("redordId") id: String): Promise<any> {
+    try {
+      let record = await UserinfoMongo.aggregate([
+        {
+          $match: {
+            _id: ObjectID(id),
+            isDelete: false,
+          },
+        },
+      ]);
+
+      if (record.length == 0) {
+        throw new Error("Unable to find the record");
+      }
+
+      let updatedRecord = await UserinfoMongo.updateOne(
+        {
+          _id: ObjectID(id),
+        },
+        {
+          $set: {
+            isVerified: false,
+            status: "Disapproved",
+            updatedAt: new Date(
+              new Date().setHours(
+                new Date().getHours() + 5,
+                new Date().getMinutes() + 30
+              )
+            ),
+          },
+        }
+      );
+
+      return updatedRecord.nModified > 0 ? true : false;
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  }
+
+  @Query((returns) => JSON, { description: "Verify the user data" })
+  async userpdf(
+    @Arg("nikshayID") nikshayID: String,
+    @Arg("month") months: Number,
+    @Arg("Year") years: Number
+  ): Promise<any> {
+    try {
+      const year: any = years;
+      const month: any = months;
+      const startDate = new Date(year, month - 1, 1);
+
+      const endDate = new Date(year, month, 2);
+
+      const records = await UserMongo.aggregate([
+        {
+          $match: {
+            nikshayID: nikshayID,
+            isDelete: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "recordcounts",
+            localField: "_id",
+            foreignField: "user",
+            as: "recordsCounts",
+          },
+        },
+      ]);
+
+      let foundDate: any = [];
+      let monthDate: any = [];
+
+      let currentDate = new Date(startDate);
+      while (currentDate <= endDate) {
+        monthDate.push({ Date: new Date(currentDate) });
+        const dateExists = await records[0].recordsCounts.some((item: any) => {
+          if (
+            item.Date.toLocaleDateString() == currentDate.toLocaleDateString()
+          ) {
+            foundDate.push({
+              Date: new Date(item.Date),
+              completed: true,
+              nikshayID: nikshayID,
+            });
+            return true;
+          }
+          return false;
+        });
+
+        currentDate.setDate(currentDate.getDate() + 1);
+        if (dateExists == false) {
+          foundDate.push({
+            Date: new Date(currentDate),
+            completed: false,
+            nikshayID: nikshayID,
+          });
+        }
+      }
+
+      // const worksheet = workbook.addWorksheet("Sheet 3");
+      // worksheet.columns = [
+      //   { header: "Date", key: "date", width: 20 },
+      //   { header: "Tablete Taken", key: "Completed", width: 10 },
+      //   { header: "nikshayID", key: "Nikshay", width: 10 },
+      // ];
+
+      // foundDate.forEach((item: any) => {
+      //   worksheet.addRow(item);
+      // });
+
+      // workbook.xlsx
+      //   .writeFile("output.xlsx")
+      //   .then(() => {
+      //     console.log("Excel file generated successfully!");
+      //   })
+      //   .catch((error: any) => {
+      //     console.error("Error generating Excel file:", error);
+      //   });
+
+      return foundDate;
+    } catch (error) {
+      throw new Error(`${error}`);
+    }
+  }
+
+  @Query((returns) => JSON, { description: "Verify the user data" })
+  async SearchByNiksha(@Arg("nikshayID") nikshayID: String): Promise<any> {
+    try {
+      const records = await UserMongo.aggregate([
+        {
+          $match: {
+            nikshayID: nikshayID,
+            isDelete: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "userinfos",
+            localField: "_id",
+            foreignField: "user",
+            as: "userrecords",
+          },
+        },
+      ]);
+
+      return records;
     } catch (error) {
       throw new Error(`${error}`);
     }

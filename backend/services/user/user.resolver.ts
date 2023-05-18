@@ -51,7 +51,7 @@ export default class UserResolver {
             },
           }
         );
-        return { Login: true, userId: users[0]._id,isAdmin:users[0].isAdmin  };
+        return { Login: true, userId: users[0]._id, isAdmin: users[0].isAdmin };
       } else {
         return { Login: false, userId: null };
       }
@@ -65,18 +65,17 @@ export default class UserResolver {
     @Arg("userInput")
     userInput: AddUserInput
   ): Promise<any> {
-   
     try {
       let users = await UserMongo.aggregate([
         {
           $match: {
-            $or: [{ email: userInput.email }, { number: userInput.number }],
+            $or: [{ number: userInput.number }],
           },
         },
       ]);
-     
+
       if (users.length != 0) {
-        throw new Error("User with this email/phone number id already exist");
+        throw new Error("User with this phone number is already exist");
       }
 
       var min = 100000;
@@ -84,7 +83,13 @@ export default class UserResolver {
       let jsonBody = {
         name: userInput.name,
         email: userInput.email,
-        // dob: userInput.dob,
+        nikshayID: userInput.nikshayID,
+        dob: new Date(
+          new Date().setHours(
+            new Date().getHours() + 5,
+            new Date().getMinutes() + 30
+          )
+        ),
         number: userInput.number,
         personId: Math.floor(Math.random() * (max - min + 1)) + min,
         otp: Math.floor(Math.random() * (max - min + 1)) + min,
@@ -94,16 +99,15 @@ export default class UserResolver {
       await user.save().catch((err: any) => {
         throw new Error("Error while creating user : " + err);
       });
-     
 
-      const accountSid = "ACb0125eb14e1ed3139bdf55b0042415fb";
-      const authToken = "9e675d4ca7dc92f2d3fe774997e61bbd";
+      const accountSid = "ACfcfdfe49329fe2d60ba0cc9bc9a47302";
+      const authToken = "43407b792a2644eb0868901b0fcb4241";
       let client = require("twilio")(accountSid, authToken);
 
       let sms = await client.messages
         .create({
           body: `Your Vots Verification OTP is: ${user.otp}`,
-          from: "+12543544982",
+          from: "+12525019427",
           to: "+91" + user.number,
         })
         .then((response: any) => {
@@ -156,14 +160,14 @@ export default class UserResolver {
       );
       let user = await UserMongo.findById(users[0]._id);
 
-      const accountSid = "ACb0125eb14e1ed3139bdf55b0042415fb";
-      const authToken = "9e675d4ca7dc92f2d3fe774997e61bbd";
+      const accountSid = "ACfcfdfe49329fe2d60ba0cc9bc9a47302";
+      const authToken = "43407b792a2644eb0868901b0fcb4241";
       let client = require("twilio")(accountSid, authToken);
 
       let sms = await client.messages
         .create({
           body: `Your Vots Verification OTP is: ${user.otp}`,
-          from: "+12543544982",
+          from: "+12525019427",
           to: "+91" + user.number,
         })
         .then((response: any) => {

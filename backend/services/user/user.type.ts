@@ -34,6 +34,9 @@ export default class User {
 
   @Field((type) => Number, { nullable: true })
   personId?: number;
+
+  @Field({ nullable: true })
+  nikshayID: string;
 }
 
 

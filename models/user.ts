@@ -11,13 +11,19 @@ const UserSchema = new Schema({
     },
   },
 
-  bod: {
+  nikshayID: {
     type: String,
+    required: true,
     lowercase: true,
     validate: {
       validator: (value: any) => !/\s/g.test(value),
-      message: "address must not contain any whitespace characters",
+      message: "Name must not contain any whitespace characters",
     },
+  },
+
+  dob: {
+    type: Date,
+    required: true,
   },
 
   countryCode: {
@@ -74,8 +80,8 @@ const UserSchema = new Schema({
     default: new Date(
       new Date().setHours(
         new Date().getHours() + 5,
-        new Date().getMinutes() + 30,
-      ),
+        new Date().getMinutes() + 30
+      )
     ),
   },
 

@@ -24,7 +24,6 @@ const UserInfoSchema = new Schema({
 
   isVerified: {
     type: Boolean,
-    default: false,
   },
 
   createdAt: {

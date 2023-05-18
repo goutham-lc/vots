@@ -13,4 +13,8 @@ export default class AddUserInput {
 
   @Field({ nullable: true })
   email: string;
+
+  @Field({ nullable: true })
+  nikshayID: string;
+  
 }
