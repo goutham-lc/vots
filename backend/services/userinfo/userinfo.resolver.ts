@@ -69,6 +69,14 @@ export default class UserInfoResolver {
           isDelete: false,
         },
       },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
       { $sort: { updatedAt: -1 } },
     ]);
 
@@ -260,7 +268,7 @@ export default class UserInfoResolver {
               Date: new Date(item.Date),
               isverified: true,
               status: "Completed",
-              nikshayID: nikshayID,
+              nikshayID: nikshayID.toString(),
               userName: records[0].name,
               userEmail: records[0].email,
             });
@@ -276,7 +284,7 @@ export default class UserInfoResolver {
               Date: new Date(currentDate),
               isverified: "Awaiting the Arrival",
               status: "Awaiting the Arrival",
-              nikshayID: nikshayID,
+              nikshayID:  nikshayID.toString(),
               userName: records[0].name,
               userEmail: records[0].email,
             });
@@ -285,7 +293,7 @@ export default class UserInfoResolver {
               Date: new Date(currentDate),
               isverified: false,
               status: "DisApproved",
-              nikshayID: nikshayID,
+              nikshayID:  nikshayID.toString(),
               userName: records[0].name,
               userEmail: records[0].email,
             });
