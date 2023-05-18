@@ -101,7 +101,7 @@ export default class UserResolver {
       });
 
       const accountSid = "ACfcfdfe49329fe2d60ba0cc9bc9a47302";
-      const authToken = "43407b792a2644eb0868901b0fcb4241";
+      const authToken = "5207e80ba0739da9be09f3482a63f0cb";
       let client = require("twilio")(accountSid, authToken);
 
       let sms = await client.messages
@@ -161,7 +161,7 @@ export default class UserResolver {
       let user = await UserMongo.findById(users[0]._id);
 
       const accountSid = "ACfcfdfe49329fe2d60ba0cc9bc9a47302";
-      const authToken = "43407b792a2644eb0868901b0fcb4241";
+      const authToken = "5207e80ba0739da9be09f3482a63f0cb";
       let client = require("twilio")(accountSid, authToken);
 
       let sms = await client.messages
