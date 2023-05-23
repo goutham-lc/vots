@@ -3,27 +3,16 @@ import { Schema, model } from "mongoose";
 const UserSchema = new Schema({
   name: {
     type: String,
-    required: true,
     lowercase: true,
-    validate: {
-      validator: (value: any) => !/\s/g.test(value),
-      message: "Name must not contain any whitespace characters",
-    },
   },
 
   nikshayID: {
     type: String,
-    required: true,
     lowercase: true,
-    validate: {
-      validator: (value: any) => !/\s/g.test(value),
-      message: "Name must not contain any whitespace characters",
-    },
   },
 
   dob: {
     type: Date,
-    required: true,
   },
 
   countryCode: {
@@ -47,10 +36,6 @@ const UserSchema = new Schema({
   email: {
     type: String,
     lowercase: true,
-    validate: {
-      validator: (value: any) => !/\s/g.test(value),
-      message: "Email must not contain any whitespace characters",
-    },
   },
 
   isAdmin: {
